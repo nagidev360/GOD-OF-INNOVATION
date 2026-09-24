@@ -149,3 +149,7 @@ with check ((select auth.uid()) = user_id);
 create policy "automation run owner access" on public.automation_runs for all to authenticated
 using ((select auth.uid()) = user_id)
 with check ((select auth.uid()) = user_id);
+
+
+alter table public.automation_workflows add column if not exists next_run_at timestamptz;
+create index if not exists idx_automation_workflows_due on public.automation_workflows(enabled, trigger_type, next_run_at) where enabled = true and trigger_type = 'schedule';
