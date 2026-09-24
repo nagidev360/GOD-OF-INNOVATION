@@ -9,7 +9,8 @@ export default function MissionsPage(){
   const [description,setDescription]=useState("");
   const [loading,setLoading]=useState(true);
   const [saving,setSaving]=useState(false);
-  const [error,setError]=useState("");\n  const [idea,setIdea]=useState(""); const [planning,setPlanning]=useState(false); const [plan,setPlan]=useState<any>(null);
+  const [error,setError]=useState("");
+  const [idea,setIdea]=useState(""); const [planning,setPlanning]=useState(false); const [plan,setPlan]=useState<any>(null);
 
   async function load(){setLoading(true);const r=await fetch("/api/missions");const d=await r.json();if(!r.ok)setError(d.error||"Failed to load missions.");else setMissions(d.missions||[]);setLoading(false)}
   useEffect(()=>{load()},[]);
