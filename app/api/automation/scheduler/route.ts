@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
-import {createAutomationAdminClient,executeAutomationWorkflow} from "../../../lib/automation-executor";
-import {nextCronRun} from "../../../lib/automation-schedule";
+import {createAutomationAdminClient,executeAutomationWorkflow} from "../../../../lib/automation-executor";
+import {nextCronRun} from "../../../../lib/automation-schedule";
 export const dynamic="force-dynamic";
 export async function POST(request:Request){
   const secret=process.env.AUTOMATION_CRON_SECRET; if(!secret||request.headers.get("authorization")!==`Bearer ${secret}`)return NextResponse.json({error:"Unauthorized."},{status:401});
