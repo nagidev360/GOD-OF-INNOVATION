@@ -1,0 +1,7 @@
+import {NextResponse} from "next/server";
+import {createAutomationAdminClient,executeAutomationWorkflow} from "../../../lib/automation-executor";
+export const dynamic="force-dynamic";
+export async function POST(request:Request){
+ const secret=process.env.AUTOMATION_EVENT_SECRET||process.env.AUTOMATION_CRON_SECRET; if(!secret||request.headers.get("authorization")!==`Bearer ${secret}`)return NextResponse.json({error:"Unauthorized."},{status:401});
+ try{const body=await request.json(); const eventName=typeof body.event==="string"?body.event.trim():""; if(!eventName||eventName.length>120)return NextResponse.json({error:"event is required."},{status:400}); const supabase=createAutomationAdminClient(); const {data:items,error}=await supabase.from("automation_workflows").select("id,user_id,name,description,trigger_type,enabled,config").eq("enabled",true).eq("trigger_type","event"); if(error)throw new Error(error.message); let executed=0; for(const w of items||[]){if(w.config?.event_name!==eventName)continue; try{await executeAutomationWorkflow(supabase,w,w.user_id,"event",body.payload??{});executed++;}catch{}} return NextResponse.json({ok:true,event:eventName,matched:executed});}catch(error){return NextResponse.json({error:error instanceof Error?error.message:"Event trigger failed."},{status:500});}
+}
