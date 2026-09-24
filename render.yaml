@@ -1,0 +1,11 @@
+services:
+  - type: cron
+    name: god-of-innovation-automation-scheduler
+    schedule: "* * * * *"
+    buildCommand: npm install
+    startCommand: node scripts/automation-scheduler.mjs
+    envVars:
+      - key: APP_URL
+        sync: false
+      - key: AUTOMATION_CRON_SECRET
+        sync: false
